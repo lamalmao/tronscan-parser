@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Contract {
+  address           String   @id
+  name              String
+  description       String
+  balance           Float    @default(0)
+  balanceInUsd      Float    @default(0)
+  trxCount          Int      @default(0)
+  balanceWithTokens Int      @default(0)
+  vip               Boolean
+  token             Token    @relation(fields: [tokenId], references: [id])
+  dateCreated       DateTime
+  dateLoaded        DateTime @default(now())
+  creator           Wallet?  @relation(fields: [creatorAddress], references: [address])
+  creatorAddress    String?
+  tokenId           String
+}
+
+model Token {
+  id           String     @id
+  tokenName    String     @default("")
+  tokenAbbr    String     @default("")
+  tokenDecinal Int
+  vip          Boolean    @default(false)
+  tokenLevel   Int        @default(0)
+  tokenLogo    String
+  tokenCanShow Int        @default(0)
+  contracts    Contract[]
+}
+
+model Wallet {
+  address           String           @id
+  incoming          Transaction[]    @relation("incomingTransactions")
+  outcoming         Transaction[]    @relation("outcomingTransactions")
+  currentSnapshotId Int              @default(-1)
+  snapshots         WalletSnapshot[]
+  contracts         Contract[]
+}
+
+model WalletSnapshot {
+  id                Int      @id @default(autoincrement())
+  tokensAmount      Float    @default(0)
+  walletAmountInUsd Float    @default(0)
+  tokens            Json?
+  loadDate          DateTime @default(now())
+  wallet            Wallet   @relation(fields: [walletAddress], references: [address])
+  walletAddress     String
+}
+
+model Transaction {
+  hash              String   @id
+  sender            Wallet   @relation("incomingTransactions", fields: [from], references: [address])
+  recipient         Wallet   @relation("outcomingTransactions", fields: [to], references: [address])
+  confirmed         Boolean
+  revert            Boolean
+  amount            Float
+  amountInUsd       Float
+  transactionDate   DateTime @default(now())
+  loadDate          DateTime @default(now())
+  block             Int      @default(0)
+  from              String
+  to                String
+  multiSignFee      Float    @default(0)
+  netFee            Float    @default(0)
+  netFeeCost        Float    @default(0)
+  energyUsage       Float    @default(0)
+  fee               Float    @default(0)
+  energyFeeCost     Float    @default(0)
+  energyFee         Float    @default(0)
+  energyUsageTotal  Float    @default(0)
+  memoFee           Float    @default(0)
+  originEnergyUsage Float    @default(0)
+  accountCreateFee  Float    @default(0)
+  netUsage          Float    @default(0)
+}
