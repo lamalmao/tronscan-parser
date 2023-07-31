@@ -11,7 +11,7 @@ type TransactionResponse = {
   data: Array<ITransaction>;
 };
 
-class TronAPIParser {
+class TronScanAPIParser {
   private readonly _apiKey: string;
   private static readonly _endpoints = {
     contractData: 'https://apilist.tronscanapi.com/api/contract',
@@ -45,7 +45,7 @@ class TronAPIParser {
 
       return response.data;
     } catch (error) {
-      console.log((error as Error).message);
+      return undefined;
     }
   }
 
@@ -57,7 +57,7 @@ class TronAPIParser {
   public async getContract(address: string): Promise<undefined | IContract> {
     try {
       const contract = await this._makeRequest<ITronScanResponse<IContract>>(
-        TronAPIParser._endpoints.contractData,
+        TronScanAPIParser._endpoints.contractData,
         {
           contract: address
         }
@@ -69,7 +69,6 @@ class TronAPIParser {
           : undefined
         : undefined;
     } catch (error) {
-      console.log((error as Error).message);
       return undefined;
     }
   }
@@ -85,7 +84,7 @@ class TronAPIParser {
   ): Promise<undefined | Array<ITransaction>> {
     try {
       const transactions = await this._makeRequest<TransactionResponse>(
-        TronAPIParser._endpoints.transactionsList,
+        TronScanAPIParser._endpoints.transactionsList,
         {
           address,
           page: loaded ? loaded.length / 10000 : 0,
@@ -107,7 +106,6 @@ class TronAPIParser {
         return transactions.data;
       }
     } catch (error) {
-      console.log((error as Error).message);
       return undefined;
     }
   }
@@ -120,7 +118,7 @@ class TronAPIParser {
   public async getWalletData(address: string): Promise<undefined | IWallet> {
     try {
       const wallet = await this._makeRequest<IWallet>(
-        TronAPIParser._endpoints.walletData,
+        TronScanAPIParser._endpoints.walletData,
         {
           address
         }
@@ -128,10 +126,9 @@ class TronAPIParser {
 
       return wallet;
     } catch (error) {
-      console.log((error as Error).message);
       return undefined;
     }
   }
 }
 
-export default TronAPIParser;
+export default TronScanAPIParser;
