@@ -97,12 +97,14 @@ export interface ITransaction {
   tokenInfo: IToken;
   contractRet: string;
   data: string;
+  amount: number;
+  revert: boolean;
 }
 
 /**
  * Представление кошелька в TronScanAPI
  */
 export interface IWallet {
-  data: [Array<IWalletToken>] | null;
+  data: Array<IWalletToken> | null;
   count?: number;
 }
