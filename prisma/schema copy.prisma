@@ -29,7 +29,7 @@ model Wallet {
   lastUpdate        DateTime
   incoming          Transaction[]    @relation("incomingTransactions")
   outcoming         Transaction[]    @relation("outcomingTransactions")
-  currentSnapshotId Int?
+  currentSnapshotId Int
   snapshots         WalletSnapshot[]
   contracts         Contract[]
 }
